@@ -7,6 +7,10 @@ This repository contains the source code of the demo application shown in the fo
 
 ![Materials Shop demo](images/demo.png)
 
+## Requirements
+
+[Android Studio 4.2 Canary](https://developer.android.com/studio/preview) or newer.
+
 ## Features and integrations
 
 This sample application shows how to use the following libraries and features:
