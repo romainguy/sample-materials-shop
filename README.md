@@ -15,7 +15,6 @@ This sample application shows how to use the following libraries and features:
   - Scrolling list (`AdapterList`)
   - Animations
   - `ConstraintLayout`
-  - Testing
   - Interoperability with `android.view`
   - IDE previews
 - [Room](https://developer.android.com/topic/libraries/architecture/room): data persistence
