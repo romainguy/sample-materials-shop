@@ -40,7 +40,6 @@ import androidx.ui.material.icons.filled.ShoppingCart
 import androidx.ui.material.icons.sharp.Add
 import androidx.ui.material.icons.sharp.Remove
 import androidx.ui.material.ripple.ripple
-import androidx.ui.semantics.Semantics
 import androidx.ui.unit.dp
 import androidx.ui.viewinterop.AndroidView
 import com.curiouscreature.compose.R
@@ -328,18 +327,11 @@ fun ShoppingCartItemRow(
 fun FilamentViewer(product: Product) {
     var modelViewer by state<ModelViewer?> { null }
 
-    onActive {
-        val frameCallback = object : Choreographer.FrameCallback {
-            override fun doFrame(frameTimeNanos: Long) {
-                Choreographer.getInstance().postFrameCallback(this)
+    launchInComposition {
+        while (true) {
+            awaitFrameNanos { frameTimeNanos ->
                 modelViewer?.render(frameTimeNanos)
             }
-        }
-
-        Choreographer.getInstance().postFrameCallback(frameCallback)
-
-        onDispose {
-            Choreographer.getInstance().removeFrameCallback(frameCallback)
         }
     }
 
