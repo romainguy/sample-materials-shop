@@ -28,20 +28,10 @@ fun CartItemPreview() {
         var color by state { "Fiery Red" }
 
         ShoppingCartItem(
-            Product(
-                17,
-                "Car paint",
-                color,
-                1_50,
-                LITER,
-                quantity
-            ),
+            Product(17, "Car paint", color, 1_50, LITER, quantity),
             increase = { quantity++ },
             decrease = { quantity-- },
-            updateColor = {
-                color =
-                    nextProductColor(color)
-            }
+            updateColor = { color = nextProductColor(color) }
         ) {
             SampleImage(color)
         }

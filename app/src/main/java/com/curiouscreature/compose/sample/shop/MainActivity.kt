@@ -17,7 +17,6 @@
 package com.curiouscreature.compose.sample.shop
 
 import android.os.Bundle
-import android.view.Choreographer
 import android.view.SurfaceView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.*
@@ -26,7 +25,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.ui.animation.animate
 import androidx.ui.core.*
 import androidx.ui.foundation.*
-import androidx.ui.foundation.selection.Toggleable
+import androidx.ui.foundation.lazy.LazyColumnItems
+import androidx.ui.foundation.selection.toggleable
 import androidx.ui.foundation.shape.corner.CircleShape
 import androidx.ui.foundation.shape.corner.RoundedCornerShape
 import androidx.ui.graphics.Color
@@ -39,7 +39,6 @@ import androidx.ui.material.icons.filled.Done
 import androidx.ui.material.icons.filled.ShoppingCart
 import androidx.ui.material.icons.sharp.Add
 import androidx.ui.material.icons.sharp.Remove
-import androidx.ui.material.ripple.ripple
 import androidx.ui.unit.dp
 import androidx.ui.viewinterop.AndroidView
 import com.curiouscreature.compose.R
@@ -91,10 +90,10 @@ class MainActivity : AppCompatActivity() {
         setContent {
             StoreTheme {
                 Scaffold(
-                    topAppBar = { StoreAppBar() },
+                    topBar = { StoreAppBar() },
                     floatingActionButton = { StoreCheckout(shoppingCart) }
-                ) { modifier ->
-                    ShoppingCart(shoppingCart, increase, decrease, updateColor, modifier)
+                ) { padding ->
+                    ShoppingCart(shoppingCart, increase, decrease, updateColor, padding)
                 }
             }
         }
@@ -140,7 +139,6 @@ class MainActivity : AppCompatActivity() {
                 .color(r, g, b)
                 .intensity(70_000.0f)
                 .direction(0.28f, -0.6f, -0.76f)
-                //.castShadows(true)
                 .build(engine, light)
 
         fun createScene(name: String, gltf: String) {
@@ -173,12 +171,12 @@ fun ShoppingCart(
     increase: (Product) -> Unit,
     decrease: (Product) -> Unit,
     updateColor: (Product) -> Unit,
-    modifier: Modifier = Modifier
+    padding: InnerPadding
 ) {
     val products by shoppingCart.observeAsState(emptyList())
-    AdapterList(
-        modifier = modifier.padding(top = 8.dp),
-        data = products
+    LazyColumnItems(
+        modifier = Modifier.padding(padding),
+        items = products
     ) { product ->
         ShoppingCartItem(product, increase, decrease, updateColor) {
             FilamentViewer(product)
@@ -211,11 +209,7 @@ fun ShoppingCartItem(
     ) {
         Stack {
             Column {
-                Toggleable(
-                    value = selected,
-                    onValueChange = onSelected,
-                    modifier = Modifier.ripple()
-                ) {
+                Box(modifier = Modifier.toggleable(value = selected, onValueChange = onSelected)) {
                     Stack {
                         content()
 
@@ -238,12 +232,6 @@ fun ShoppingCartItem(
     }
 }
 
-private object IncreaseTag
-private object DecreaseTag
-private object LabelTag
-private object ColorTag
-private object AmountTag
-
 @Composable
 fun ShoppingCartItemRow(
     product: Product,
@@ -252,58 +240,43 @@ fun ShoppingCartItemRow(
     updateColor: (Product) -> Unit = { }
 ) {
     val hasColorSwatch = product.color.isProductColor
-    ConstraintLayout(
-        modifier = Modifier.padding(12.dp).fillMaxWidth(),
-        constraintSet = ConstraintSet {
-            val decreaseConstraint = tag(DecreaseTag).apply {
-                left constrainTo parent.left
-                centerVertically()
-            }
-            val increaseConstraint = tag(IncreaseTag).apply {
-                left constrainTo decreaseConstraint.right
-                left.margin = 4.dp
-                centerVertically()
-            }
-            val labelConstraint = tag(LabelTag).apply {
-                left constrainTo increaseConstraint.right
-                left.margin = 8.dp
-                centerVertically()
-            }
-            val colorConstraint = tag(ColorTag).apply {
-                left constrainTo labelConstraint.right
-                left.margin = 4.dp
-                centerVertically()
-            }
-            tag(AmountTag).apply {
-                left constrainTo (if (hasColorSwatch) colorConstraint else labelConstraint).right
-                right constrainTo parent.right
-                horizontalBias = 1.0f
-                centerVertically()
-            }
-        }
-    ) {
+    ConstraintLayout(modifier = Modifier.padding(12.dp).fillMaxWidth()) {
+        val (decreaseRef, increaseRef, labelRef, colorRef, amountRef) = createRefs()
+
         SmallButton(
-            modifier = Modifier.tag(DecreaseTag),
+            modifier = Modifier.constrainAs(decreaseRef) {
+                start.linkTo(parent.start)
+                centerVerticallyTo(parent)
+            },
             onClick = { decrease(product) }
         ) {
             Image(Icons.Sharp.Remove)
         }
 
         SmallButton(
-            modifier = Modifier.tag(IncreaseTag),
+            modifier = Modifier.constrainAs(increaseRef) {
+                start.linkTo(decreaseRef.end, margin = 4.dp)
+                centerVerticallyTo(parent)
+            },
             onClick = { increase(product) }
         ) {
             Image(Icons.Sharp.Add)
         }
 
         Text(
-            modifier = Modifier.tag(LabelTag),
+            modifier = Modifier.constrainAs(labelRef) {
+                start.linkTo(increaseRef.end, margin = 8.dp)
+                centerVerticallyTo(parent)
+            },
             text = "${product.quantity}× ${product.material}"
         )
 
         if (hasColorSwatch) {
             SmallButton(
-                modifier = Modifier.tag(ColorTag),
+                modifier = Modifier.constrainAs(colorRef) {
+                    start.linkTo(labelRef.end, margin = 4.dp)
+                    centerVerticallyTo(parent)
+                },
                 onClick = { updateColor(product) },
                 color = Color.White
             ) {
@@ -317,7 +290,14 @@ fun ShoppingCartItemRow(
         }
 
         Text(
-            modifier = Modifier.tag(AmountTag),
+            modifier = Modifier.constrainAs(amountRef) {
+                linkTo(
+                    start = (if (hasColorSwatch) colorRef else labelRef).end,
+                    end = parent.end,
+                    bias = 1.0f
+                )
+                centerVerticallyTo(parent)
+            },
             text = formatAmount(product)
         )
     }
@@ -329,7 +309,7 @@ fun FilamentViewer(product: Product) {
 
     launchInComposition {
         while (true) {
-            awaitFrameNanos { frameTimeNanos ->
+            withFrameNanos { frameTimeNanos ->
                 modelViewer?.render(frameTimeNanos)
             }
         }

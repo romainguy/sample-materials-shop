@@ -39,7 +39,6 @@ class ModelViewer(
     val engine: Engine,
     val surfaceView: SurfaceView
 ) {
-
     val view: View = engine.createView()
     val camera: Camera =
         engine.createCamera().apply { setExposure(kAperture, kShutterSpeed, kSensitivity) }
@@ -95,15 +94,22 @@ class ModelViewer(
 
     private fun addDetachListener(view: android.view.View) {
         view.addOnAttachStateChangeListener(object : android.view.View.OnAttachStateChangeListener {
-            override fun onViewAttachedToWindow(v: android.view.View?) {}
+            var detached = false
+
+            override fun onViewAttachedToWindow(v: android.view.View?) { detached = false }
+
             override fun onViewDetachedFromWindow(v: android.view.View?) {
-                animator.cancel()
+                if (!detached) {
+                    animator.cancel()
 
-                uiHelper.detach()
+                    uiHelper.detach()
 
-                engine.destroyRenderer(renderer)
-                engine.destroyView(this@ModelViewer.view)
-                engine.destroyCamera(camera)
+                    engine.destroyRenderer(renderer)
+                    engine.destroyView(this@ModelViewer.view)
+                    engine.destroyCamera(camera)
+
+                    detached = true
+                }
             }
         })
     }
