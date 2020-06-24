@@ -209,20 +209,20 @@ fun ShoppingCartItem(
     ) {
         Stack {
             Column {
-                Box(modifier = Modifier.toggleable(value = selected, onValueChange = onSelected)) {
-                    Stack {
-                        content()
+                Stack(
+                    modifier = Modifier.toggleable(value = selected, onValueChange = onSelected)
+                ) {
+                    content()
 
-                        val selectedAlpha = animate(target = if (selected) 0.65f else 0.0f)
-                        Surface(
-                            modifier = Modifier.matchParentSize(),
-                            color = MaterialTheme.colors.primary.copy(alpha = selectedAlpha)
-                        ) {
-                            Icon(
-                                asset = Icons.Filled.Done,
-                                tint = contentColor().copy(alpha = selectedAlpha)
-                            )
-                        }
+                    val selectedAlpha = animate(target = if (selected) 0.65f else 0.0f)
+                    Surface(
+                        modifier = Modifier.matchParentSize(),
+                        color = MaterialTheme.colors.primary.copy(alpha = selectedAlpha)
+                    ) {
+                        Icon(
+                            asset = Icons.Filled.Done,
+                            tint = contentColor().copy(alpha = selectedAlpha)
+                        )
                     }
                 }
 
