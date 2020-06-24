@@ -1,6 +1,6 @@
 # Materials Shop
 
-Sample app for [Jetpack Compose Developer Preview 2](https://developer.android.com/jetpack/compose) (`0.1.0-dev13`).
+Sample app for [Jetpack Compose](https://developer.android.com/jetpack/compose) (`0.1.0-dev14`).
 This repository contains the source code of the demo application shown in the following videos:
 - [Android 11 Beta: Tools & Frameworks](https://www.youtube.com/watch?v=bAdRKQNbLmQ)
 - [Get Composed](https://www.youtube.com/watch?v=U5BwfqBpiWU)
@@ -16,7 +16,7 @@ This repository contains the source code of the demo application shown in the fo
 This sample application shows how to use the following libraries and features:
 
 - [Jetpack Compose Developer Preview 2](https://developer.android.com/jetpack/compose)
-  - Scrolling list (`AdapterList`)
+  - Scrolling list (`LayColumnItems`)
   - Animations
   - `ConstraintLayout`
   - Interoperability with `android.view`
