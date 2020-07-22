@@ -31,7 +31,7 @@ val StoreColors = lightColorPalette(
 )
 
 @Composable
-fun StoreTheme(content: @Composable() () -> Unit) {
+fun StoreTheme(content: @Composable () -> Unit) {
     MaterialTheme(
         colors = StoreColors,
         content = content

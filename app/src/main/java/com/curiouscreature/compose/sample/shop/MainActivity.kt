@@ -190,7 +190,7 @@ fun ShoppingCartItem(
     increase: (Product) -> Unit = { },
     decrease: (Product) -> Unit = { },
     updateColor: (Product) -> Unit = { },
-    content: @Composable() () -> Unit = { }
+    content: @Composable () -> Unit = { }
 ) {
     val (selected, onSelected) = state { false }
 
@@ -351,7 +351,7 @@ fun SmallButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = { },
     color: Color = MaterialTheme.colors.secondary,
-    content: @Composable() () -> Unit = { }
+    content: @Composable () -> Unit = { }
 ) {
     Surface(
         modifier = modifier.size(16.dp).gravity(Alignment.CenterVertically),
