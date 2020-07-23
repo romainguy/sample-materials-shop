@@ -5,49 +5,49 @@ plugins {
     kotlin("kapt")
 }
 
-val compose_version = "0.1.0-dev15"
-val coroutines_version = "1.3.7"
-val room_version = "2.2.5"
-val arch_lifecycle_version = "2.2.0"
-val filament_version = "1.8.0"
+val composeVersion = "0.1.0-dev15"
+val coroutinesVersion = "1.3.7"
+val roomVersion = "2.2.5"
+val archLifecycleVersion = "2.2.0"
+val filamentVersion = "1.8.0"
 
 dependencies {
     implementation(kotlin("stdlib"))
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
 
     implementation("com.google.android.material:material:1.1.0")
 
     implementation("androidx.core:core-ktx:1.3.1")
     implementation("androidx.appcompat:appcompat:1.1.0")
 
-    implementation("androidx.room:room-runtime:$room_version")
-    implementation("androidx.room:room-ktx:$room_version")
-    kapt("androidx.room:room-compiler:$room_version")
-    annotationProcessor("androidx.room:room-compiler:$room_version")
+    implementation("androidx.room:room-runtime:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
+    kapt("androidx.room:room-compiler:$roomVersion")
+    annotationProcessor("androidx.room:room-compiler:$roomVersion")
 
-    implementation("androidx.lifecycle:lifecycle-extensions:$arch_lifecycle_version")
-    kapt("androidx.lifecycle:lifecycle-common-java8:$arch_lifecycle_version")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$arch_lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-extensions:$archLifecycleVersion")
+    kapt("androidx.lifecycle:lifecycle-common-java8:$archLifecycleVersion")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$archLifecycleVersion")
 
-    implementation("androidx.compose.animation:animation:$compose_version")
-    implementation("androidx.compose.foundation:foundation:$compose_version")
-    implementation("androidx.compose.foundation:foundation-layout:$compose_version")
-    implementation("androidx.compose.material:material:$compose_version")
-    implementation("androidx.compose.material:material-icons-extended:$compose_version")
-    implementation("androidx.compose.runtime:runtime:$compose_version")
-    implementation("androidx.compose.runtime:runtime-livedata:$compose_version")
-    implementation("androidx.compose.ui:ui:$compose_version")
-    implementation("androidx.ui:ui-tooling:$compose_version")
+    implementation("androidx.compose.animation:animation:$composeVersion")
+    implementation("androidx.compose.foundation:foundation:$composeVersion")
+    implementation("androidx.compose.foundation:foundation-layout:$composeVersion")
+    implementation("androidx.compose.material:material:$composeVersion")
+    implementation("androidx.compose.material:material-icons-extended:$composeVersion")
+    implementation("androidx.compose.runtime:runtime:$composeVersion")
+    implementation("androidx.compose.runtime:runtime-livedata:$composeVersion")
+    implementation("androidx.compose.ui:ui:$composeVersion")
+    implementation("androidx.ui:ui-tooling:$composeVersion")
 
-    implementation("com.google.android.filament:filament-android:$filament_version")
-    implementation("com.google.android.filament:filament-utils-android:$filament_version")
-    implementation("com.google.android.filament:gltfio-android:$filament_version")
+    implementation("com.google.android.filament:filament-android:$filamentVersion")
+    implementation("com.google.android.filament:filament-utils-android:$filamentVersion")
+    implementation("com.google.android.filament:gltfio-android:$filamentVersion")
 }
 
 android {
     compileSdkVersion(29)
-    buildToolsVersion = "29.0.2"
+    buildToolsVersion = "29.0.3"
 
     defaultConfig {
         applicationId = "com.curiouscreature.compose"
@@ -83,7 +83,7 @@ android {
 
     composeOptions {
         kotlinCompilerVersion = "1.4.0-dev-withExperimentalGoogleExtensions-20200720"
-        kotlinCompilerExtensionVersion = compose_version
+        kotlinCompilerExtensionVersion = composeVersion
     }
 
     packagingOptions {
@@ -98,6 +98,6 @@ android {
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
-        freeCompilerArgs += listOf("-Xallow-jvm-ir-dependencies", "-Xskip-prerelease-check")
+        freeCompilerArgs = listOf("-Xallow-jvm-ir-dependencies", "-Xskip-prerelease-check")
     }
 }
