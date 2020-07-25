@@ -15,7 +15,7 @@ This repository contains the source code of the demo application shown in the fo
 
 This sample application shows how to use the following libraries and features:
 
-- [Jetpack Compose Developer Preview 2](https://developer.android.com/jetpack/compose)
+- [Jetpack Compose](https://developer.android.com/jetpack/compose)
   - Scrolling list (`LayColumnItems`)
   - Animations
   - `ConstraintLayout`
