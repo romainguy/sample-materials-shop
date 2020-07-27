@@ -207,27 +207,25 @@ fun ShoppingCartItem(
         ),
         elevation = 4.dp
     ) {
-        Stack {
-            Column {
-                Stack(
-                    modifier = Modifier.toggleable(value = selected, onValueChange = onSelected)
+        Column {
+            Stack(
+                modifier = Modifier.toggleable(value = selected, onValueChange = onSelected)
+            ) {
+                content()
+
+                val selectedAlpha = animate(target = if (selected) 0.65f else 0.0f)
+                Surface(
+                    modifier = Modifier.matchParentSize(),
+                    color = MaterialTheme.colors.primary.copy(alpha = selectedAlpha)
                 ) {
-                    content()
-
-                    val selectedAlpha = animate(target = if (selected) 0.65f else 0.0f)
-                    Surface(
-                        modifier = Modifier.matchParentSize(),
-                        color = MaterialTheme.colors.primary.copy(alpha = selectedAlpha)
-                    ) {
-                        Icon(
-                            asset = Icons.Filled.Done,
-                            tint = contentColor().copy(alpha = selectedAlpha)
-                        )
-                    }
+                    Icon(
+                        asset = Icons.Filled.Done,
+                        tint = contentColor().copy(alpha = selectedAlpha)
+                    )
                 }
-
-                ShoppingCartItemRow(product, decrease, increase, updateColor)
             }
+
+            ShoppingCartItemRow(product, decrease, increase, updateColor)
         }
     }
 }
