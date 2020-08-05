@@ -16,12 +16,12 @@
 
 package com.curiouscreature.compose.sample.shop
 
-import androidx.compose.Composable
-import androidx.ui.graphics.Color
-import androidx.ui.material.MaterialTheme
-import androidx.ui.material.lightColorPalette
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.lightColors
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 
-val StoreColors = lightColorPalette(
+val StoreColors = lightColors(
     primary = Color(0xffdd0d3e),
     onPrimary = Color.White,
     secondary = Color(0xfffbdf61),

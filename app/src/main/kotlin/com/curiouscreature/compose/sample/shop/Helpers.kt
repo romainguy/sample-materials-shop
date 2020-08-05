@@ -16,15 +16,15 @@
 
 package com.curiouscreature.compose.sample.shop
 
-import androidx.compose.Composable
-import androidx.ui.core.ContentScale
-import androidx.ui.core.Modifier
-import androidx.ui.foundation.Image
-import androidx.ui.graphics.Color
-import androidx.ui.layout.fillMaxWidth
-import androidx.ui.layout.height
-import androidx.ui.res.imageResource
-import androidx.ui.unit.dp
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.unit.dp
 import com.curiouscreature.compose.R
 
 val ProductColors = mapOf(

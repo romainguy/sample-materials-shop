@@ -5,7 +5,7 @@ plugins {
     kotlin("kapt")
 }
 
-val composeVersion = "0.1.0-dev15"
+val composeVersion = "0.1.0-dev16"
 val coroutinesVersion = "1.3.7"
 val roomVersion = "2.2.5"
 val archLifecycleVersion = "2.2.0"
@@ -16,10 +16,10 @@ dependencies {
     api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
     api("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
 
-    implementation("com.google.android.material:material:1.1.0")
+    implementation("com.google.android.material:material:1.2.0")
 
     implementation("androidx.core:core-ktx:1.3.1")
-    implementation("androidx.appcompat:appcompat:1.1.0")
+    implementation("androidx.appcompat:appcompat:1.2.0")
 
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
@@ -82,7 +82,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerVersion = "1.4.0-dev-withExperimentalGoogleExtensions-20200720"
+        kotlinCompilerVersion = "1.4.0-rc"
         kotlinCompilerExtensionVersion = composeVersion
     }
 
@@ -98,7 +98,6 @@ android {
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
-        freeCompilerArgs = listOf("-Xallow-jvm-ir-dependencies", "-Xskip-prerelease-check")
+        freeCompilerArgs = listOf("-Xallow-jvm-ir-dependencies", "-Xskip-prerelease-check", "-Xskip-metadata-version-check")
     }
 }
-

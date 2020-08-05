@@ -17,37 +17,44 @@
 package com.curiouscreature.compose.sample.shop
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.SurfaceView
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.*
+import androidx.compose.animation.animate
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.RowScope.gravity
+import androidx.compose.foundation.lazy.LazyColumnFor
+import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.sharp.Add
+import androidx.compose.material.icons.sharp.Remove
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.ContextAmbient
+import androidx.compose.ui.platform.setContent
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
-import androidx.ui.animation.animate
-import androidx.ui.core.*
-import androidx.ui.foundation.*
-import androidx.ui.foundation.lazy.LazyColumnItems
-import androidx.ui.foundation.selection.toggleable
-import androidx.ui.foundation.shape.corner.CircleShape
-import androidx.ui.foundation.shape.corner.RoundedCornerShape
-import androidx.ui.graphics.Color
-import androidx.ui.layout.*
-import androidx.ui.layout.RowScope.gravity
-import androidx.ui.livedata.observeAsState
-import androidx.ui.material.*
-import androidx.ui.material.icons.Icons
-import androidx.ui.material.icons.filled.Done
-import androidx.ui.material.icons.filled.ShoppingCart
-import androidx.ui.material.icons.sharp.Add
-import androidx.ui.material.icons.sharp.Remove
-import androidx.ui.unit.dp
-import androidx.ui.viewinterop.AndroidView
 import com.curiouscreature.compose.R
 import com.google.android.filament.*
+import com.google.android.filament.Colors
 import com.google.android.filament.gltfio.AssetLoader
 import com.google.android.filament.gltfio.MaterialProvider
 import com.google.android.filament.gltfio.ResourceLoader
 import com.google.android.filament.utils.KtxLoader
 import com.google.android.filament.utils.Utils
+import kotlin.collections.set
 
 class MainActivity : AppCompatActivity() {
     private lateinit var storeViewModel: StoreViewModel
@@ -174,14 +181,14 @@ fun ShoppingCart(
     padding: InnerPadding
 ) {
     val products by shoppingCart.observeAsState(emptyList())
-    LazyColumnItems(
+    LazyColumnFor(items = products,
         modifier = Modifier.padding(padding),
-        items = products
-    ) { product ->
-        ShoppingCartItem(product, increase, decrease, updateColor) {
-            FilamentViewer(product)
+        itemContent = { product ->
+            ShoppingCartItem(product, increase, decrease, updateColor) {
+                FilamentViewer(product)
+            }
         }
-    }
+    )
 }
 
 @Composable
@@ -192,7 +199,7 @@ fun ShoppingCartItem(
     updateColor: (Product) -> Unit = { },
     content: @Composable () -> Unit = { }
 ) {
-    val (selected, onSelected) = state { false }
+    val (selected, onSelected) = remember { mutableStateOf(false) }
 
     val topLeftCornerRadius = animate(target = if (selected) 48.dp.value else 8.dp.value)
     val cornerRadius        = animate(target = if (selected)  0.dp.value else 8.dp.value)
@@ -303,7 +310,7 @@ fun ShoppingCartItemRow(
 
 @Composable
 fun FilamentViewer(product: Product) {
-    var modelViewer by state<ModelViewer?> { null }
+    var modelViewer by remember { mutableStateOf<ModelViewer?>(null) }
 
     launchInComposition {
         while (true) {
@@ -336,12 +343,16 @@ fun FilamentViewer(product: Product) {
         }
     }
 
-    AndroidView(R.layout.filament_host) { view ->
-        val (engine) = scenes[product.material]!!
-        modelViewer = ModelViewer(engine, view as SurfaceView).also {
-            setupModelViewer(it)
+    AndroidView({ context ->
+        LayoutInflater.from(context).inflate(
+            R.layout.filament_host, FrameLayout(context), false
+        ).apply {
+            val (engine) = scenes[product.material]!!
+            modelViewer = ModelViewer(engine, this as SurfaceView).also {
+                setupModelViewer(it)
+            }
         }
-    }
+    })
 }
 
 @Composable

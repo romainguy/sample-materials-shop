@@ -16,7 +16,7 @@
 
 package com.curiouscreature.compose.sample.shop
 
-import androidx.compose.*
+import androidx.compose.runtime.*
 import androidx.ui.tooling.preview.Preview
 import com.curiouscreature.compose.sample.shop.AmountUnit.LITER
 
@@ -24,8 +24,8 @@ import com.curiouscreature.compose.sample.shop.AmountUnit.LITER
 @Composable
 fun CartItemPreview() {
     StoreTheme {
-        var quantity by state { 1 }
-        var color by state { "Fiery Red" }
+        var quantity by remember { mutableStateOf(1) }
+        var color by remember { mutableStateOf("Fiery Red") }
 
         ShoppingCartItem(
             Product(17, "Car paint", color, 1_50, LITER, quantity),
