@@ -93,7 +93,7 @@ class ModelViewer(
     }
 
     private fun addDetachListener(view: android.view.View) {
-        view.addOnAttachStateChangeListener(object : android.view.View.OnAttachStateChangeListener {
+        class AttachListener : android.view.View.OnAttachStateChangeListener {
             var detached = false
 
             override fun onViewAttachedToWindow(v: android.view.View?) { detached = false }
@@ -111,7 +111,8 @@ class ModelViewer(
                     detached = true
                 }
             }
-        })
+        }
+        view.addOnAttachStateChangeListener(AttachListener())
     }
 
     inner class SurfaceCallback : UiHelper.RendererCallback {

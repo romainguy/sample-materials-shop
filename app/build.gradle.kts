@@ -5,11 +5,11 @@ plugins {
     kotlin("kapt")
 }
 
-val composeVersion = "0.1.0-dev17"
+val composeVersion = "1.0.0-alpha01"
 val coroutinesVersion = "1.3.7"
 val roomVersion = "2.2.5"
 val archLifecycleVersion = "2.2.0"
-val filamentVersion = "1.8.0"
+val filamentVersion = "1.8.1"
 
 dependencies {
     implementation(kotlin("stdlib"))
