@@ -24,7 +24,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.animate
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.RowScope.gravity
+import androidx.compose.foundation.layout.RowScope.align
 import androidx.compose.foundation.lazy.LazyColumnFor
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
@@ -36,6 +36,7 @@ import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.sharp.Add
 import androidx.compose.material.icons.sharp.Remove
 import androidx.compose.runtime.*
+import androidx.compose.runtime.dispatch.withFrameNanos
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -178,7 +179,7 @@ fun ShoppingCart(
     increase: (Product) -> Unit,
     decrease: (Product) -> Unit,
     updateColor: (Product) -> Unit,
-    padding: InnerPadding
+    padding: PaddingValues
 ) {
     val products by shoppingCart.observeAsState(emptyList())
     LazyColumnFor(items = products,
@@ -363,7 +364,7 @@ fun SmallButton(
     content: @Composable () -> Unit = { }
 ) {
     Surface(
-        modifier = modifier.size(16.dp).gravity(Alignment.CenterVertically),
+        modifier = modifier.size(16.dp).align(Alignment.CenterVertically),
         color = color,
         shape = CircleShape,
         elevation = 2.dp

@@ -5,7 +5,7 @@ plugins {
     kotlin("kapt")
 }
 
-val composeVersion = "1.0.0-alpha01"
+val composeVersion = "1.0.0-alpha03"
 val coroutinesVersion = "1.3.7"
 val roomVersion = "2.2.5"
 val archLifecycleVersion = "2.2.0"
@@ -16,7 +16,7 @@ dependencies {
     api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
     api("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
 
-    implementation("com.google.android.material:material:1.2.0")
+    implementation("com.google.android.material:material:1.2.1")
 
     implementation("androidx.core:core-ktx:1.3.1")
     implementation("androidx.appcompat:appcompat:1.2.0")
@@ -47,7 +47,7 @@ dependencies {
 
 android {
     compileSdkVersion(29)
-    buildToolsVersion = "29.0.3"
+    buildToolsVersion = "30.0.0"
 
     defaultConfig {
         applicationId = "com.curiouscreature.compose"
