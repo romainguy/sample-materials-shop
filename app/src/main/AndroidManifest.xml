@@ -11,6 +11,7 @@
         android:theme="@style/Theme.AndroidStore">
         <activity
             android:name="com.curiouscreature.compose.sample.shop.MainActivity"
+            android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.AndroidStore">
             <intent-filter>

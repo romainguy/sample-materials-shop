@@ -5,21 +5,23 @@ plugins {
     kotlin("kapt")
 }
 
-val composeVersion = "1.0.0-alpha03"
+val composeVersion = "1.2.0"
 val coroutinesVersion = "1.3.7"
-val roomVersion = "2.2.5"
+val roomVersion = "2.4.3"
 val archLifecycleVersion = "2.2.0"
-val filamentVersion = "1.8.1"
+val filamentVersion = "1.25.3"
 
 dependencies {
     implementation(kotlin("stdlib"))
     api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
     api("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
 
-    implementation("com.google.android.material:material:1.2.1")
+    implementation("com.google.android.material:material:1.6.1")
+    implementation("androidx.activity:activity-compose:1.5.1")
 
-    implementation("androidx.core:core-ktx:1.3.1")
-    implementation("androidx.appcompat:appcompat:1.2.0")
+    implementation("androidx.core:core-ktx:1.7.0")
+    implementation("androidx.appcompat:appcompat:1.5.0")
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
 
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
@@ -38,7 +40,9 @@ dependencies {
     implementation("androidx.compose.runtime:runtime:$composeVersion")
     implementation("androidx.compose.runtime:runtime-livedata:$composeVersion")
     implementation("androidx.compose.ui:ui:$composeVersion")
-    implementation("androidx.ui:ui-tooling:$composeVersion")
+
+    debugImplementation("androidx.compose.ui:ui-tooling:1.2.1")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.2.1")
 
     implementation("com.google.android.filament:filament-android:$filamentVersion")
     implementation("com.google.android.filament:filament-utils-android:$filamentVersion")
@@ -46,13 +50,13 @@ dependencies {
 }
 
 android {
-    compileSdkVersion(29)
-    buildToolsVersion = "30.0.0"
+    buildToolsVersion = "30.0.3"
+    compileSdk = 32
 
     defaultConfig {
         applicationId = "com.curiouscreature.compose"
-        minSdkVersion(29)
-        targetSdkVersion(29)
+        minSdk = 29
+        targetSdk = 32
         versionCode = 1
         versionName = "1.0"
 
@@ -66,7 +70,10 @@ android {
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 
@@ -82,7 +89,6 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerVersion = "1.4.0"
         kotlinCompilerExtensionVersion = composeVersion
     }
 
@@ -98,6 +104,10 @@ android {
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
-        freeCompilerArgs = listOf("-Xallow-jvm-ir-dependencies", "-Xskip-prerelease-check", "-Xskip-metadata-version-check")
+        freeCompilerArgs = listOf(
+            "-Xallow-jvm-ir-dependencies",
+            "-Xskip-prerelease-check",
+            "-Xskip-metadata-version-check"
+        )
     }
 }
