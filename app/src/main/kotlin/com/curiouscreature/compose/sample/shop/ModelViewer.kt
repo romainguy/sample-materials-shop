@@ -41,7 +41,9 @@ class ModelViewer(
 ) {
     val view: View = engine.createView()
     val camera: Camera =
-        engine.createCamera().apply { setExposure(kAperture, kShutterSpeed, kSensitivity) }
+        engine.createCamera(
+            engine.entityManager.create()
+        ).apply { setExposure(kAperture, kShutterSpeed, kSensitivity) }
     var scene: Scene? = null
         set(value) {
             view.scene = value
@@ -96,7 +98,9 @@ class ModelViewer(
         class AttachListener : android.view.View.OnAttachStateChangeListener {
             var detached = false
 
-            override fun onViewAttachedToWindow(v: android.view.View?) { detached = false }
+            override fun onViewAttachedToWindow(v: android.view.View?) {
+                detached = false
+            }
 
             override fun onViewDetachedFromWindow(v: android.view.View?) {
                 if (!detached) {
@@ -106,7 +110,7 @@ class ModelViewer(
 
                     engine.destroyRenderer(renderer)
                     engine.destroyView(this@ModelViewer.view)
-                    engine.destroyCamera(camera)
+                    engine.destroyCameraComponent(camera.entity)
 
                     detached = true
                 }

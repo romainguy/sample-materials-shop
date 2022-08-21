@@ -23,28 +23,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.curiouscreature.compose.R
 
 val ProductColors = mapOf(
-    "Fiery Red"        to Color(0.634f, 0.000f, 0.000f),
-    "Deep Blue"        to Color(0.000f, 0.480f, 0.596f),
-    "Swirly Orange"    to Color(0.874f, 0.522f, 0.080f),
+    "Fiery Red" to Color(0.634f, 0.000f, 0.000f),
+    "Deep Blue" to Color(0.000f, 0.480f, 0.596f),
+    "Swirly Orange" to Color(0.874f, 0.522f, 0.080f),
     "Fantastic Yellow" to Color(0.859f, 0.808f, 0.020f)
 )
 
 val ProductColorProgression = mapOf(
-    "Fiery Red"        to "Deep Blue",
-    "Deep Blue"        to "Swirly Orange",
-    "Swirly Orange"    to "Fantastic Yellow",
+    "Fiery Red" to "Deep Blue",
+    "Deep Blue" to "Swirly Orange",
+    "Swirly Orange" to "Fantastic Yellow",
     "Fantastic Yellow" to "Fiery Red"
 )
 
 val ProductColorSampleImages = mapOf(
-    "Fiery Red"        to R.drawable.sample_red,
-    "Deep Blue"        to R.drawable.sample_blue,
-    "Swirly Orange"    to R.drawable.sample_orange,
+    "Fiery Red" to R.drawable.sample_red,
+    "Deep Blue" to R.drawable.sample_blue,
+    "Swirly Orange" to R.drawable.sample_orange,
     "Fantastic Yellow" to R.drawable.sample_yellow
 )
 
@@ -59,10 +59,11 @@ val String.isProductColor: Boolean
 @Composable
 fun SampleImage(color: String) {
     Image(
-        modifier = Modifier.fillMaxWidth().height(180.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(180.dp),
+        painter = painterResource(id = ProductColorSampleImages.getOrElse(color) { R.drawable.sample_orange }),
         contentScale = ContentScale.Crop,
-        asset = imageResource(
-            ProductColorSampleImages.getOrElse(color) { R.drawable.sample_orange }
-        )
+        contentDescription = null,
     )
 }

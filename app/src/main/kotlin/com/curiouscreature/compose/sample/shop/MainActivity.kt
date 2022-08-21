@@ -20,12 +20,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.SurfaceView
 import android.widget.FrameLayout
+import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.animation.animate
-import androidx.compose.foundation.*
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.RowScope.align
-import androidx.compose.foundation.lazy.LazyColumnFor
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -36,24 +39,23 @@ import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.sharp.Add
 import androidx.compose.material.icons.sharp.Remove
 import androidx.compose.runtime.*
-import androidx.compose.runtime.dispatch.withFrameNanos
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.ContextAmbient
-import androidx.compose.ui.platform.setContent
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import com.curiouscreature.compose.R
 import com.google.android.filament.*
 import com.google.android.filament.Colors
 import com.google.android.filament.gltfio.AssetLoader
-import com.google.android.filament.gltfio.MaterialProvider
 import com.google.android.filament.gltfio.ResourceLoader
-import com.google.android.filament.utils.KtxLoader
+import com.google.android.filament.gltfio.UbershaderProvider
+import com.google.android.filament.utils.KTX1Loader
 import com.google.android.filament.utils.Utils
 import kotlin.collections.set
 
@@ -68,7 +70,9 @@ class MainActivity : AppCompatActivity() {
     private var light: Int = 0
 
     companion object {
-        init { Utils.init() }
+        init {
+            Utils.init()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -128,26 +132,26 @@ class MainActivity : AppCompatActivity() {
 
     private fun initFilament() {
         engine = Engine.create()
-        assetLoader = AssetLoader(engine, MaterialProvider(engine), EntityManager.get())
+        assetLoader = AssetLoader(engine, UbershaderProvider(engine), EntityManager.get())
         resourceLoader = ResourceLoader(engine)
 
         val ibl = "courtyard_8k"
         readCompressedAsset(this, "envs/${ibl}/${ibl}_ibl.ktx").let {
-            indirectLight = KtxLoader.createIndirectLight(engine, it)
+            indirectLight = KTX1Loader.createIndirectLight(engine, it)
             indirectLight.intensity = 30_000.0f
         }
 
         readCompressedAsset(this, "envs/${ibl}/${ibl}_skybox.ktx").let {
-            skybox = KtxLoader.createSkybox(engine, it)
+            skybox = KTX1Loader.createSkybox(engine, it)
         }
 
         light = EntityManager.get().create()
         val (r, g, b) = Colors.cct(6_000.0f)
         LightManager.Builder(LightManager.Type.SUN)
-                .color(r, g, b)
-                .intensity(70_000.0f)
-                .direction(0.28f, -0.6f, -0.76f)
-                .build(engine, light)
+            .color(r, g, b)
+            .intensity(70_000.0f)
+            .direction(0.28f, -0.6f, -0.76f)
+            .build(engine, light)
 
         fun createScene(name: String, gltf: String) {
             val scene = engine.createScene()
@@ -182,14 +186,15 @@ fun ShoppingCart(
     padding: PaddingValues
 ) {
     val products by shoppingCart.observeAsState(emptyList())
-    LazyColumnFor(items = products,
+    LazyColumn(
         modifier = Modifier.padding(padding),
-        itemContent = { product ->
+    ) {
+        items(products) { product ->
             ShoppingCartItem(product, increase, decrease, updateColor) {
                 FilamentViewer(product)
             }
         }
-    )
+    }
 }
 
 @Composable
@@ -202,33 +207,34 @@ fun ShoppingCartItem(
 ) {
     val (selected, onSelected) = remember { mutableStateOf(false) }
 
-    val topLeftCornerRadius = animate(target = if (selected) 48.dp.value else 8.dp.value)
-    val cornerRadius        = animate(target = if (selected)  0.dp.value else 8.dp.value)
+    val topLeftCornerRadius by animateFloatAsState(if (selected) 48.dp.value else 8.dp.value)
+    val cornerRadius by animateFloatAsState(if (selected) 0.dp.value else 8.dp.value)
 
     Surface(
         modifier = Modifier.padding(16.dp, 8.dp, 16.dp, 8.dp),
         shape = RoundedCornerShape(
-            topLeft = topLeftCornerRadius.dp,
-            topRight = cornerRadius.dp,
-            bottomLeft = cornerRadius.dp,
-            bottomRight = cornerRadius.dp
+            topStart = topLeftCornerRadius.dp,
+            topEnd = cornerRadius.dp,
+            bottomStart = cornerRadius.dp,
+            bottomEnd = cornerRadius.dp
         ),
         elevation = 4.dp
     ) {
         Column {
-            Stack(
+            Box(
                 modifier = Modifier.toggleable(value = selected, onValueChange = onSelected)
             ) {
                 content()
 
-                val selectedAlpha = animate(target = if (selected) 0.65f else 0.0f)
+                val selectedAlpha by animateFloatAsState(if (selected) 0.65f else 0.0f)
                 Surface(
-                    modifier = Modifier.matchParentSize(),
+                    modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.primary.copy(alpha = selectedAlpha)
                 ) {
                     Icon(
-                        asset = Icons.Filled.Done,
-                        tint = contentColor().copy(alpha = selectedAlpha)
+                        imageVector = Icons.Filled.Done,
+                        contentDescription = null,
+                        tint = contentColorFor(MaterialTheme.colors.primary).copy(alpha = selectedAlpha)
                     )
                 }
             }
@@ -246,7 +252,11 @@ fun ShoppingCartItemRow(
     updateColor: (Product) -> Unit = { }
 ) {
     val hasColorSwatch = product.color.isProductColor
-    ConstraintLayout(modifier = Modifier.padding(12.dp).fillMaxWidth()) {
+    ConstraintLayout(
+        modifier = Modifier
+            .padding(12.dp)
+            .fillMaxWidth()
+    ) {
         val (decreaseRef, increaseRef, labelRef, colorRef, amountRef) = createRefs()
 
         SmallButton(
@@ -256,7 +266,7 @@ fun ShoppingCartItemRow(
             },
             onClick = { decrease(product) }
         ) {
-            Image(Icons.Sharp.Remove)
+            Image(Icons.Sharp.Remove, null)
         }
 
         SmallButton(
@@ -266,7 +276,7 @@ fun ShoppingCartItemRow(
             },
             onClick = { increase(product) }
         ) {
-            Image(Icons.Sharp.Add)
+            Image(Icons.Sharp.Add, null)
         }
 
         Text(
@@ -287,11 +297,13 @@ fun ShoppingCartItemRow(
                 color = Color.White
             ) {
                 Box(
-                    modifier = Modifier.size(13.dp),
-                    shape = CircleShape,
-                    gravity = Alignment.Center,
-                    backgroundColor = productColor(product)
-                )
+                    modifier = Modifier
+                        .size(13.dp)
+                        .background(
+                            shape = CircleShape,
+                            color = productColor(product),
+                        ),
+                ) {}
             }
         }
 
@@ -313,7 +325,7 @@ fun ShoppingCartItemRow(
 fun FilamentViewer(product: Product) {
     var modelViewer by remember { mutableStateOf<ModelViewer?>(null) }
 
-    launchInComposition {
+    LaunchedEffect(Unit) {
         while (true) {
             withFrameNanos { frameTimeNanos ->
                 modelViewer?.render(frameTimeNanos)
@@ -321,7 +333,7 @@ fun FilamentViewer(product: Product) {
         }
     }
 
-    onCommit(product) {
+    LaunchedEffect(product) {
         val (engine, scene, asset) = scenes[product.material]!!
         modelViewer?.scene = scene
 
@@ -364,14 +376,14 @@ fun SmallButton(
     content: @Composable () -> Unit = { }
 ) {
     Surface(
-        modifier = modifier.size(16.dp).align(Alignment.CenterVertically),
+        modifier = modifier.size(16.dp),
         color = color,
         shape = CircleShape,
         elevation = 2.dp
     ) {
         Box(
             modifier = Modifier.clickable(onClick = onClick),
-            gravity = Alignment.Center
+            contentAlignment = Alignment.Center
         ) {
             content()
         }
@@ -380,7 +392,7 @@ fun SmallButton(
 
 @Composable
 fun StoreAppBar() {
-    TopAppBar(title = { Text(ContextAmbient.current.getString(R.string.app_name)) })
+    TopAppBar(title = { Text(LocalContext.current.getString(R.string.app_name)) })
 }
 
 @Composable
@@ -388,7 +400,7 @@ fun StoreCheckout(shoppingCart: LiveData<List<Product>>) {
     val products = shoppingCart.observeAsState(emptyList()).value
     ExtendedFloatingActionButton(
         text = { Text("${products.sumBy { it.quantity }} items") },
-        icon = { Icon(Icons.Filled.ShoppingCart) },
+        icon = { Icon(Icons.Filled.ShoppingCart, null) },
         onClick = { }
     )
 }
