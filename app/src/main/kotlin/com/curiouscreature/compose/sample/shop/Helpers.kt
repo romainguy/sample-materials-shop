@@ -23,7 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.curiouscreature.compose.R
 
@@ -61,8 +61,9 @@ fun SampleImage(color: String) {
     Image(
         modifier = Modifier.fillMaxWidth().height(180.dp),
         contentScale = ContentScale.Crop,
-        asset = imageResource(
+        painter = painterResource(
             ProductColorSampleImages.getOrElse(color) { R.drawable.sample_orange }
-        )
+        ),
+        contentDescription = null
     )
 }
