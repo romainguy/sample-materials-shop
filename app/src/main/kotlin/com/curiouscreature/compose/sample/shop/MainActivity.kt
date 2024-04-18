@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("AnimateAsStateLabel")
+
 package com.curiouscreature.compose.sample.shop
 
 import android.os.Bundle
@@ -22,10 +24,8 @@ import android.view.SurfaceView
 import android.widget.FrameLayout
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -41,7 +41,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ExtendedFloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -105,7 +104,7 @@ class MainActivity : ComponentActivity() {
 
         initFilament()
 
-        storeViewModel = ViewModelProvider(this).get(StoreViewModel::class.java)
+        storeViewModel = ViewModelProvider(this)[StoreViewModel::class.java]
         val shoppingCart = storeViewModel.shoppingCart
 
         val increase: (Product) -> Unit = { product ->
@@ -211,7 +210,7 @@ fun ShoppingCart(
     padding: PaddingValues
 ) {
     val products by shoppingCart.observeAsState(emptyList())
-    LazyColumn {
+    LazyColumn(modifier = Modifier.padding(padding)) {
         items(
             items = products,
             itemContent = { product ->
@@ -232,16 +231,8 @@ fun ShoppingCartItem(
     content: @Composable () -> Unit = {}
 ) {
     var selected by remember { mutableStateOf(false) }
-
-    val topLeftCornerRadius by animateDpAsState(
-        targetValue = if (selected) 48.dp else 8.dp,
-        animationSpec = tween(durationMillis = 300)
-    )
-
-    val cornerRadius by animateDpAsState(
-        targetValue = if (selected) 0.dp else 8.dp,
-        animationSpec = tween(durationMillis = 300)
-    )
+    val topLeftCornerRadius by animateDpAsState(targetValue = if (selected) 48.dp else 8.dp)
+    val cornerRadius by animateDpAsState(targetValue = if (selected) 0.dp else 8.dp)
 
     Surface(
         modifier = Modifier.padding(16.dp, 8.dp, 16.dp, 8.dp),
@@ -256,26 +247,26 @@ fun ShoppingCartItem(
         Column(
             modifier = Modifier.toggleable(value = selected, onValueChange = { selected = it })
         ) {
-            content()
+            Box {
+                content()
 
-            val selectedAlpha by animateFloatAsState(
-                targetValue = if (selected) 0.65f else 0.0f,
-                animationSpec = tween(durationMillis = 300)
-            )
-
-            Surface(
-                modifier = Modifier.fillMaxSize(),
-                color = MaterialTheme.colors.primary.copy(alpha = selectedAlpha)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Done,
-                    contentDescription = null,
-                    tint = Color.White.copy(alpha = selectedAlpha)
+                val selectedAlpha by animateFloatAsState(
+                    targetValue = if (selected) 0.65f else 0.0f
                 )
-            }
-        }
 
-        ShoppingCartItemRow(product, decrease, increase, updateColor)
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colors.primary.copy(alpha = selectedAlpha)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Done,
+                        contentDescription = null,
+                        tint = Color.White.copy(alpha = selectedAlpha)
+                    )
+                }
+            }
+            ShoppingCartItemRow(product, decrease, increase, updateColor)
+        }
     }
 }
 
@@ -289,7 +280,8 @@ fun ShoppingCartItemRow(
     val hasColorSwatch = product.color.isProductColor
     ConstraintLayout(modifier = Modifier
         .padding(12.dp)
-        .fillMaxWidth()) {
+        .fillMaxWidth()
+    ) {
         val (decreaseRef, increaseRef, labelRef, colorRef, amountRef) = createRefs()
 
         SmallButton(
@@ -431,7 +423,7 @@ fun StoreAppBar() {
 fun StoreCheckout(shoppingCart: LiveData<List<Product>>) {
     val products = shoppingCart.observeAsState(emptyList()).value
     ExtendedFloatingActionButton(
-        text = { Text("${products.sumBy { it.quantity }} items") },
+        text = { Text("${products.sumOf { it.quantity }} items") },
         icon = { Icon(Icons.Filled.ShoppingCart, contentDescription = null) },
         onClick = { }
     )

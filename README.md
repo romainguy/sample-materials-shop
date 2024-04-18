@@ -1,6 +1,6 @@
 # Materials Shop
 
-Sample app for [Jetpack Compose](https://developer.android.com/jetpack/compose) (`1.5`).
+Sample app for [Jetpack Compose](https://developer.android.com/jetpack/compose) (`1.6.4`).
 This repository contains the source code of the demo application shown in the following videos:
 - [Android 11 Beta: Tools & Frameworks](https://www.youtube.com/watch?v=bAdRKQNbLmQ)
 - [Get Composed](https://www.youtube.com/watch?v=U5BwfqBpiWU)

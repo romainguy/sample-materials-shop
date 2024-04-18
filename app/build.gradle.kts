@@ -1,13 +1,13 @@
 plugins {
     id("com.android.application")
+    id("com.google.devtools.ksp")
     kotlin("android")
-    kotlin("kapt")
 }
 
-val composeVersion = "1.5.4"
-val coroutinesVersion = "1.3.7"
+val composeVersion = "1.6.6"
+val coroutinesVersion = "1.8.0"
 val roomVersion = "2.6.1"
-val archLifecycleVersion = "2.2.0"
+val archLifecycleVersion = "2.7.0"
 val filamentVersion = "1.51.2"
 
 dependencies {
@@ -15,17 +15,17 @@ dependencies {
     api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
     api("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
 
-    implementation("com.google.android.material:material:1.2.1")
+    implementation("com.google.android.material:material:1.11.0")
 
-    implementation("androidx.core:core-ktx:1.3.1")
-    implementation("androidx.appcompat:appcompat:1.2.0")
+    implementation("androidx.core:core-ktx:1.13.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
 
     implementation("androidx.room:room-runtime:$roomVersion")
     annotationProcessor("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
-    kapt("androidx.room:room-compiler:$roomVersion")
+    ksp("androidx.room:room-compiler:$roomVersion")
 
-    implementation("androidx.lifecycle:lifecycle-extensions:$archLifecycleVersion")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$archLifecycleVersion")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$archLifecycleVersion")
 
     implementation("androidx.compose.animation:animation:$composeVersion")
@@ -36,7 +36,7 @@ dependencies {
     implementation("androidx.compose.runtime:runtime:$composeVersion")
     implementation("androidx.compose.runtime:runtime-livedata:$composeVersion")
     implementation("androidx.compose.ui:ui-tooling-preview-android:$composeVersion")
-    implementation("androidx.activity:activity-compose:$composeVersion")
+    implementation("androidx.activity:activity-compose:1.9.0")
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
 
     implementation("com.google.android.filament:filament-android:$filamentVersion")
@@ -48,12 +48,11 @@ android {
     namespace = "com.curiouscreature.compose"
 
     compileSdk = 34
-    buildToolsVersion = "30.0.0"
 
     defaultConfig {
         applicationId = "com.curiouscreature.compose"
         minSdk = 29
-        targetSdk = 29
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -83,11 +82,11 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.11"
+        kotlinCompilerExtensionVersion = "1.5.12"
     }
 
-    packagingOptions {
-        exclude("META-INF/atomicfu.kotlin_module")
+    packaging {
+        resources.excludes.add("META-INF/atomicfu.kotlin_module")
     }
 
     aaptOptions {
@@ -98,6 +97,5 @@ android {
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17.toString()
-        freeCompilerArgs = listOf("-Xallow-jvm-ir-dependencies", "-Xskip-prerelease-check", "-Xskip-metadata-version-check")
     }
 }
