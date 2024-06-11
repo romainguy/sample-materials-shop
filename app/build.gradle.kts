@@ -6,7 +6,7 @@ plugins {
 }
 
 val composeVersion = "1.6.6"
-val coroutinesVersion = "1.8.0"
+val coroutinesVersion = "1.8.1"
 val roomVersion = "2.6.1"
 val archLifecycleVersion = "2.8.1"
 val filamentVersion = "1.52.0"
