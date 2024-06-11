@@ -5,7 +5,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-val composeVersion = "1.6.6"
+val composeVersion = "1.6.7"
 val coroutinesVersion = "1.8.1"
 val roomVersion = "2.6.1"
 val archLifecycleVersion = "2.8.1"
