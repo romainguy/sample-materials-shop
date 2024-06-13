@@ -1,41 +1,42 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     id("com.android.application")
     id("com.google.devtools.ksp")
-    kotlin("android")
+    id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.compose")
 }
 
-val composeVersion = "1.6.6"
-val coroutinesVersion = "1.8.0"
 val roomVersion = "2.6.1"
-val archLifecycleVersion = "2.7.0"
-val filamentVersion = "1.51.2"
+val lifecycleVersion = "2.8.1"
+val filamentVersion = "1.52.0"
 
 dependencies {
     implementation(kotlin("stdlib"))
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
 
-    implementation("com.google.android.material:material:1.11.0")
+    implementation("com.google.android.material:material:1.12.0")
 
-    implementation("androidx.core:core-ktx:1.13.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.appcompat:appcompat:1.7.0")
 
     implementation("androidx.room:room-runtime:$roomVersion")
     annotationProcessor("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
 
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$archLifecycleVersion")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$archLifecycleVersion")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
 
-    implementation("androidx.compose.animation:animation:$composeVersion")
-    implementation("androidx.compose.foundation:foundation:$composeVersion")
-    implementation("androidx.compose.foundation:foundation-layout:$composeVersion")
-    implementation("androidx.compose.material:material:$composeVersion")
-    implementation("androidx.compose.material:material-icons-extended:$composeVersion")
-    implementation("androidx.compose.runtime:runtime:$composeVersion")
-    implementation("androidx.compose.runtime:runtime-livedata:$composeVersion")
-    implementation("androidx.compose.ui:ui-tooling-preview-android:$composeVersion")
+    implementation(platform("androidx.compose:compose-bom:2024.06.00"))
+    implementation("androidx.compose.animation:animation")
+    implementation("androidx.compose.foundation:foundation")
+    implementation("androidx.compose.foundation:foundation-layout")
+    implementation("androidx.compose.material:material")
+    implementation("androidx.compose.material:material-icons-extended")
+    implementation("androidx.compose.runtime:runtime")
+    implementation("androidx.compose.runtime:runtime-livedata")
+    implementation("androidx.compose.ui:ui-tooling-preview-android")
     implementation("androidx.activity:activity-compose:1.9.0")
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
 
@@ -55,22 +56,18 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
-        javaCompileOptions {
-            annotationProcessorOptions {
-                argument("room.incremental", "true")
-            }
-        }
     }
 
     buildTypes {
-        getByName("release") {
+        release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            signingConfig = signingConfigs["debug"]
         }
     }
-
-    sourceSets["main"].java.srcDir("src/main/kotlin")
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -81,21 +78,19 @@ android {
         compose = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.12"
-    }
-
     packaging {
         resources.excludes.add("META-INF/atomicfu.kotlin_module")
     }
 
-    aaptOptions {
-        noCompress("filamat", "ktx", "glb")
+    androidResources {
+        noCompress += listOf("filamat", "ktx", "glb")
     }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
-    }
+kotlin {
+    compilerOptions.jvmTarget = JvmTarget.JVM_17
+}
+
+ksp {
+    arg("room.generateKotlin", "true")
 }
